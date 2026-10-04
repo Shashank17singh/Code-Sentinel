@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "codesentinel"
+version = "1.0.0"
+description = "Evidence-based integrity triage for coding assessments: plagiarism fingerprinting, AI-code detection and a Groq-powered investigator, with a human always in the loop."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "streamlit>=1.50",
+    "groq>=1.7.0",
+    "python-dotenv>=1.0",
+    "pandas>=2.0",
+]
+
+[project.optional-dependencies]
+embeddings = ["fastembed>=0.8.1", "numpy>=1.26"]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[project.scripts]
+codesentinel = "codesentinel.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["codesentinel*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 130
+target-version = "py310"
+extend-exclude = ["data"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = ["E741", "B905", "E501"]
