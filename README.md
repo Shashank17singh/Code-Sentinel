@@ -1,6 +1,6 @@
 <div align="center">
 
-# CodeSentinel
+# Code Sentinel
 
 **An evidence-based integrity triage system for coding assessments, powered by MOSS-style fingerprinting, a Groq LLM investigator and Streamlit.**
 
@@ -16,7 +16,7 @@
 
 ## Overview
 
-CodeSentinel helps assessment teams decide **whom to ask a follow-up question**, never who is guilty. It gathers independent pieces of evidence for every submission: classmate copying, identical wrong outputs, overlap with AI-generated solutions and AI-style signals. A tool-using LLM agent then weighs that evidence and drafts an evidence report, and a human reviewer makes the final call. Every decision is stored in an audit log.
+Code Sentinel helps assessment teams decide **whom to ask a follow-up question**, never who is guilty. It gathers independent pieces of evidence for every submission: classmate copying, identical wrong outputs, overlap with AI-generated solutions and AI-style signals. A tool-using LLM agent then weighs that evidence and drafts an evidence report, and a human reviewer makes the final call. Every decision is stored in an audit log.
 
 > **System flags, human decides.**
 
@@ -94,7 +94,7 @@ graph TD
 ## Project Structure
 
 ```text
-CodeSentinel/
+Code-Sentinel/
 ├── app.py                      # Streamlit application
 ├── codesentinel/
 │   ├── __init__.py             # App name and version
@@ -143,7 +143,7 @@ CodeSentinel/
 ### 1. Environment Initialization
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/Shashank17singh/Code-Sentinel
 cd CodeSentinel
 python -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
@@ -210,7 +210,7 @@ git init
 git add .
 git commit -m "Initial commit: CodeSentinel"
 git branch -M main
-git remote add origin https://github.com/<your-username>/CodeSentinel.git
+git remote add origin https://github.com/Shashank17singh/Code-Sentinel.git
 git push -u origin main
 ```
 
@@ -228,7 +228,7 @@ GROQ_API_KEY = "your_api_key_here"
 
 4. Click **Deploy**. Dependencies install from `requirements.txt` automatically.
 
-- **Dashboard URL:** `https://<your-app-name>.streamlit.app/` *(add yours after deploying)*
+- **Dashboard URL:** `https://code-sentinel.streamlit.app/` 
 
 > The decision log (`data/reviews.json`) lives on the app's file system, which is ephemeral on hosted platforms. Use the in-app **Download** button or point `CODESENTINEL_REVIEWS_PATH` at persistent storage.
 >
