@@ -53,13 +53,13 @@ def test_pair_between_orients_lines():
 
 def test_heuristic_flags_ai_like_code_and_not_messy_code():
     ai_like = (
-        'def length_of_longest_substring(text: str) -> int:\n'
+        "def length_of_longest_substring(text: str) -> int:\n"
         '    """Return the length of the longest substring without repeats."""\n'
-        '    if not text:\n        return 0\n'
-        '    last_seen = {}\n    start = 0\n    longest = 0\n'
-        '    for index, char in enumerate(text):\n'
-        '        if char in last_seen and last_seen[char] >= start:\n            start = last_seen[char] + 1\n'
-        '        last_seen[char] = index\n        longest = max(longest, index - start + 1)\n'
+        "    if not text:\n        return 0\n"
+        "    last_seen = {}\n    start = 0\n    longest = 0\n"
+        "    for index, char in enumerate(text):\n"
+        "        if char in last_seen and last_seen[char] >= start:\n            start = last_seen[char] + 1\n"
+        "        last_seen[char] = index\n        longest = max(longest, index - start + 1)\n"
         '    return longest\n\n\nif __name__ == "__main__":\n    print(length_of_longest_substring(input()))\n'
     )
     messy = "s=input()\nl=0\nr=0\nm=0\nd={}\n#print(d)\nfor c in s:\n  r+=1\n  m=max(m,r-l)\nprint(m)\n"

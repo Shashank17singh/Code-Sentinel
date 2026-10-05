@@ -6,7 +6,11 @@
       "openFiles": ["README.md", "app.py"]
     },
     "vscode": {
-      "extensions": ["ms-python.python", "ms-python.vscode-pylance", "charliermarsh.ruff"]
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "charliermarsh.ruff"
+      ]
     }
   },
   "updateContentCommand": "pip install -r requirements.txt && pip install -e '.[dev]'",

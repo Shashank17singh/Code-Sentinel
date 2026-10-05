@@ -84,8 +84,14 @@ def generate_references(llm: LLMClient, problem: Problem, force: bool = False, l
 def reference_match(problem: Problem, code: str) -> dict[str, Any]:
     """Compare ``code`` with every AI reference solution of the problem."""
     if not problem.references:
-        return {"available": False, "best_reference": None, "best_match": 0.0,
-                "any_reference_coverage": 0.0, "matched_lines": [], "flag": False}
+        return {
+            "available": False,
+            "best_reference": None,
+            "best_match": 0.0,
+            "any_reference_coverage": 0.0,
+            "matched_lines": [],
+            "flag": False,
+        }
 
     mine = fingerprint(code)
     ignore = fingerprint(problem.starter).hashes  # only the starter code is ignored here

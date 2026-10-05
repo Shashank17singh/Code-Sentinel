@@ -33,12 +33,12 @@ REFERENCE_TEMPERATURE = 0.8
 AGENT_MAX_ATTEMPTS = 5
 
 # --- Detection thresholds ---------------------------------------------------
-KGRAM_SIZE = 5            # tokens per k-gram
-WINNOW_WINDOW = 4         # hashes per winnowing window
-COMMON_THRESHOLD = 4      # fingerprints shared by more candidates than this are "common code"
+KGRAM_SIZE = 5  # tokens per k-gram
+WINNOW_WINDOW = 4  # hashes per winnowing window
+COMMON_THRESHOLD = 4  # fingerprints shared by more candidates than this are "common code"
 SIMILARITY_FLAG_AT = 0.5  # classmate similarity that triggers a flag
-REFERENCE_FLAG_AT = 0.5   # share of a submission found in an AI reference that triggers a flag
-STYLE_FLAG_AT = 0.6       # heuristic / LLM style score that triggers a flag
+REFERENCE_FLAG_AT = 0.5  # share of a submission found in an AI reference that triggers a flag
+STYLE_FLAG_AT = 0.6  # heuristic / LLM style score that triggers a flag
 
 # --- Sandbox ----------------------------------------------------------------
 RUN_TIMEOUT_SECONDS = 5

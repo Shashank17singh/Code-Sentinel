@@ -121,9 +121,7 @@ def compare(a: Fingerprint, b: Fingerprint, ignore: set[int] | frozenset[int] = 
 # in many submissions: on an easy question everybody writes the same few lines.
 
 
-def common_hashes(
-    fps: dict[str, Fingerprint], starter: str, threshold: int | None = COMMON_THRESHOLD
-) -> set[int]:
+def common_hashes(fps: dict[str, Fingerprint], starter: str, threshold: int | None = COMMON_THRESHOLD) -> set[int]:
     ignore = set(fingerprint(starter).hashes)
 
     if threshold is not None:

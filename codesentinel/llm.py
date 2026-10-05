@@ -48,9 +48,7 @@ class LLMClient:
 
     def __init__(self, api_key: str | None, model: str = DEFAULT_MODEL, max_retries: int = 6):
         if not api_key:
-            raise MissingAPIKeyError(
-                "No Groq API key found. Set GROQ_API_KEY (env var, .env or Streamlit secrets)."
-            )
+            raise MissingAPIKeyError("No Groq API key found. Set GROQ_API_KEY (env var, .env or Streamlit secrets).")
         # The free tier has tight rate limits; the SDK waits and retries on 429s.
         self._client = Groq(api_key=api_key, max_retries=max_retries)
         self.model = model

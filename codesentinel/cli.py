@@ -24,8 +24,11 @@ def cmd_scan(args) -> None:
     print(f"{'student':<10}{'top classmate':>18}{'same bug with':>16}{'AI ref':>8}{'AI style':>10}   send to agent?")
     for s in analysis.summaries():
         classmate = f"{s.top_classmate} {s.top_similarity:.0%}" if s.top_classmate else "-"
-        bug = f"{s.same_bug_with[0]} +{len(s.same_bug_with) - 1}" if len(s.same_bug_with) > 1 else (
-            s.same_bug_with[0] if s.same_bug_with else "-")
+        bug = (
+            f"{s.same_bug_with[0]} +{len(s.same_bug_with) - 1}"
+            if len(s.same_bug_with) > 1
+            else (s.same_bug_with[0] if s.same_bug_with else "-")
+        )
         verdict = "YES: " + ", ".join(s.reasons) if s.reasons else ""
         print(f"{s.student:<10}{classmate:>18}{bug:>16}{s.ref_match:>8.0%}{s.style_score:>10.2f}   {verdict}")
     print(f"\nInvestigate one candidate:  python -m codesentinel agent {problem.id} <student>")
@@ -90,7 +93,9 @@ def cmd_ai_style(args) -> None:
         for s in h["signals"]:
             print(f"    {s}")
         if "llm" in r:
-            print(f"  LLM judge {r['llm']['ai_likelihood']:.2f}{'  <-- FLAG' if r['llm']['flag'] else ''}: {r['llm']['reasoning']}")
+            print(
+                f"  LLM judge {r['llm']['ai_likelihood']:.2f}{'  <-- FLAG' if r['llm']['flag'] else ''}: {r['llm']['reasoning']}"
+            )
     if llm:
         print("\n--- Token usage ---\n" + llm.usage.summary())
 
@@ -151,8 +156,12 @@ def cmd_evals(args) -> None:
         print(f"{d:<22}{m['precision']:>10.0%}{m['recall']:>8.0%}{m['fpr']:>7.0%}{clean:>10}{messy:>10}")
 
     combined = "combined (2+ agree)"
-    print(f"\nHumans flagged by the combined detector: {[s['name'] for s in samples if not s['is_ai'] and s['flags'][combined]] or 'none'}")
-    print(f"AI samples missed by the combined detector: {[s['name'] for s in samples if s['is_ai'] and not s['flags'][combined]] or 'none'}")
+    print(
+        f"\nHumans flagged by the combined detector: {[s['name'] for s in samples if not s['is_ai'] and s['flags'][combined]] or 'none'}"
+    )
+    print(
+        f"AI samples missed by the combined detector: {[s['name'] for s in samples if s['is_ai'] and not s['flags'][combined]] or 'none'}"
+    )
     if llm:
         print("\n--- Token usage ---\n" + llm.usage.summary())
 
@@ -184,7 +193,9 @@ def cmd_generate_samples(args) -> None:
             print(f"  cached   {path.name}")
             return
         model = REFERENCE_MODELS[n % len(REFERENCE_MODELS)]
-        path.write_text(ask_for_solution(llm, prompts[n % len(prompts)].format(statement=problem.statement), model), encoding="utf-8")
+        path.write_text(
+            ask_for_solution(llm, prompts[n % len(prompts)].format(statement=problem.statement), model), encoding="utf-8"
+        )
         print(f"  wrote    {path.name}  ({model})")
 
     out = EVALS_DIR / "dataset" / "ai"
@@ -196,7 +207,9 @@ def cmd_generate_samples(args) -> None:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(prog="codesentinel", description=f"{APP_NAME} {__version__}: integrity triage for coding assessments")
+    p = argparse.ArgumentParser(
+        prog="codesentinel", description=f"{APP_NAME} {__version__}: integrity triage for coding assessments"
+    )
     sub = p.add_subparsers(dest="command", required=True)
     problems = list_problems()
 

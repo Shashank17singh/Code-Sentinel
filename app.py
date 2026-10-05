@@ -7,8 +7,8 @@ from __future__ import annotations
 
 import html
 import os
+from collections.abc import Iterable
 from dataclasses import replace
-from typing import Iterable
 
 import pandas as pd  # type: ignore
 import streamlit as st
@@ -140,7 +140,9 @@ def sidebar() -> tuple[str, LLMClient | None]:
             st.success("API key loaded from server configuration")
         else:
             api_key = st.text_input(
-                "Groq API key", type="password", placeholder="gsk_...",
+                "Groq API key",
+                type="password",
+                placeholder="gsk_...",
                 help="Used only for this browser session and never stored.",
             ).strip()
             st.caption("Free keys: console.groq.com/keys. Offline checks work without a key.")
@@ -191,8 +193,10 @@ def tab_scan(problem_id: str) -> None:
             "AI style score": st.column_config.ProgressColumn(format="%d%%", min_value=0, max_value=100),
         },
     )
-    st.caption("Select a row for details. Checks: classmate copying (MOSS), identical wrong outputs, "
-               "similarity to AI-generated reference solutions, and AI-style heuristics.")
+    st.caption(
+        "Select a row for details. Checks: classmate copying (MOSS), identical wrong outputs, "
+        "similarity to AI-generated reference solutions, and AI-style heuristics."
+    )
 
     if analysis.problem.tests and analysis.groups:
         with st.expander(f"Candidates sharing identical wrong outputs ({len(analysis.groups)} group(s))"):
@@ -212,8 +216,9 @@ def tab_scan(problem_id: str) -> None:
             render_code(analysis.problem.submissions[student], ref["matched_lines"])
         with right:
             st.markdown("**Closest classmates**")
-            st.dataframe(pd.DataFrame(analysis.classmates(student)).drop(columns="my_matched_lines"),
-                         hide_index=True, width="stretch")
+            st.dataframe(
+                pd.DataFrame(analysis.classmates(student)).drop(columns="my_matched_lines"), hide_index=True, width="stretch"
+            )
             st.markdown(f"**AI-style signals** (score {style['score']:.2f})")
             for signal in style["signals"] or ["no notable signals"]:
                 st.write(f"- {signal}")
@@ -249,7 +254,9 @@ def tab_pair(problem_id: str) -> None:
     with right:
         st.markdown(f"**{b}**")
         render_code(analysis.problem.submissions[b], pair["lines_b"])
-    st.caption("Highlighted lines share normalised token fingerprints. Renaming variables or changing comments does not hide a match.")
+    st.caption(
+        "Highlighted lines share normalised token fingerprints. Renaming variables or changing comments does not hide a match."
+    )
 
 
 # ============================================================
@@ -307,7 +314,9 @@ def tab_agent(problem_id: str, llm: LLMClient | None) -> None:
         with st.expander(f"Decision log ({len(reviews)})"):
             log = pd.DataFrame(reviews).drop(columns="agent_report", errors="ignore")
             st.dataframe(log, hide_index=True, width="stretch")
-            st.download_button("Download full log (JSON)", review_log.REVIEWS_FILE.read_bytes(), "reviews.json", "application/json")
+            st.download_button(
+                "Download full log (JSON)", review_log.REVIEWS_FILE.read_bytes(), "reviews.json", "application/json"
+            )
             st.caption("On hosted deployments the file system may be ephemeral: download the log or mount persistent storage.")
 
 
@@ -329,12 +338,18 @@ def tab_custom(problem_id: str, llm: LLMClient | None) -> None:
     )
     c1, c2 = st.columns(2)
     run_tests = c1.checkbox(
-        "Run hidden tests", value=False, disabled=not problem.tests,
+        "Run hidden tests",
+        value=False,
+        disabled=not problem.tests,
         help="Executes the code in a restricted subprocess (timeout, memory limit, no secrets). "
-             + ("" if problem.tests else "This problem has no tests."),
+        + ("" if problem.tests else "This problem has no tests."),
     )
-    use_llm = c2.checkbox("Also run the LLM judge", value=False, disabled=llm is None,
-                          help="Uses Groq tokens." if llm else "Requires a Groq API key.")
+    use_llm = c2.checkbox(
+        "Also run the LLM judge",
+        value=False,
+        disabled=llm is None,
+        help="Uses Groq tokens." if llm else "Requires a Groq API key.",
+    )
 
     if not st.button("Analyse submission", type="primary", disabled=not code.strip()):
         return
@@ -398,22 +413,35 @@ def tab_evals() -> None:
             }
         )
     pct_col = st.column_config.NumberColumn(format="%d%%")
-    st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch",
-                 column_config={"Precision": pct_col, "Recall": pct_col, "False-positive rate": pct_col})
+    st.dataframe(
+        pd.DataFrame(rows),
+        hide_index=True,
+        width="stretch",
+        column_config={"Precision": pct_col, "Recall": pct_col, "False-positive rate": pct_col},
+    )
 
     combined = "combined (2+ agree)"
-    st.write(f"**Humans wrongly flagged by the combined detector:** "
-             f"{', '.join(s['name'] for s in samples if not s['is_ai'] and s['flags'][combined]) or 'none'}")
-    st.write(f"**AI samples missed by the combined detector:** "
-             f"{', '.join(s['name'] for s in samples if s['is_ai'] and not s['flags'][combined]) or 'none'}")
+    st.write(
+        f"**Humans wrongly flagged by the combined detector:** "
+        f"{', '.join(s['name'] for s in samples if not s['is_ai'] and s['flags'][combined]) or 'none'}"
+    )
+    st.write(
+        f"**AI samples missed by the combined detector:** "
+        f"{', '.join(s['name'] for s in samples if s['is_ai'] and not s['flags'][combined]) or 'none'}"
+    )
 
     with st.expander("Per-sample scores"):
         score_cols = [d for d in detectors if d != combined]
         table = pd.DataFrame(
-            [{"Sample": s["name"], **{d: s["scores"].get(d) for d in score_cols}, "Flagged": s["flags"][combined]} for s in samples]
+            [
+                {"Sample": s["name"], **{d: s["scores"].get(d) for d in score_cols}, "Flagged": s["flags"][combined]}
+                for s in samples
+            ]
         )
         st.dataframe(table, hide_index=True, width="stretch")
-    st.caption("LLM-judge scores come from a cached run (data/evals/llm_cache.json); regenerate with `python -m codesentinel evals --llm`.")
+    st.caption(
+        "LLM-judge scores come from a cached run (data/evals/llm_cache.json); regenerate with `python -m codesentinel evals --llm`."
+    )
 
 
 # ============================================================

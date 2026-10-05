@@ -64,30 +64,30 @@ graph TD
 
 ## Features
 
-| Component                     | Description                                                                                                                                       |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Component                     | Description                                                                                                                                           |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **MOSS-Style Fingerprinting** | Tokenises code, normalises names, strings and numbers, then applies k-grams and winnowing (Schleimer et al., SIGMOD 2003) to detect copied structure. |
-| **Same-Bug Detection**        | Runs hidden tests and groups candidates that fail the same tests with *identical wrong outputs*, a rarely coincidental signal.                    |
-| **AI Reference Match**        | Generates solutions from several AI models and compares each submission against them, without the common-code filter.                             |
-| **AI-Style Analysis**         | Explainable heuristics (naming, docstrings, type hints, comments) plus an optional LLM-as-judge returning strict JSON via Groq structured outputs. |
-| **Investigator Agent**        | A Groq LLM chooses which checks to run (up to 5 turns), cites real lines of code and drafts follow-up questions. It never declares guilt.         |
-| **Human Review Log**          | Reviewers clear, schedule a follow-up interview or escalate; each decision is saved with the agent report that informed it.                       |
-| **Evaluation Harness**        | Measures precision, recall and false-positive rate on a labelled dataset of AI, tidy-human and messy-human code.                                  |
+| **Same-Bug Detection**        | Runs hidden tests and groups candidates that fail the same tests with _identical wrong outputs_, a rarely coincidental signal.                        |
+| **AI Reference Match**        | Generates solutions from several AI models and compares each submission against them, without the common-code filter.                                 |
+| **AI-Style Analysis**         | Explainable heuristics (naming, docstrings, type hints, comments) plus an optional LLM-as-judge returning strict JSON via Groq structured outputs.    |
+| **Investigator Agent**        | A Groq LLM chooses which checks to run (up to 5 turns), cites real lines of code and drafts follow-up questions. It never declares guilt.             |
+| **Human Review Log**          | Reviewers clear, schedule a follow-up interview or escalate; each decision is saved with the agent report that informed it.                           |
+| **Evaluation Harness**        | Measures precision, recall and false-positive rate on a labelled dataset of AI, tidy-human and messy-human code.                                      |
 
 ---
 
 ## Technology Stack
 
-| Component            | Technologies                                           |
-| :------------------- | :----------------------------------------------------- |
-| **LLM Inference**    | `Groq` (default model: `openai/gpt-oss-120b`)          |
-| **Frontend UI**      | `Streamlit`, `Pandas`                                  |
-| **Detection Core**   | Custom lexer, k-gram hashing and winnowing (pure Python) |
-| **Code Execution**   | Restricted `subprocess` sandbox (timeouts, memory limits, scrubbed env) |
-| **Configuration**    | `python-dotenv`, Streamlit secrets                     |
-| **Testing**          | `Pytest`, Streamlit `AppTest`                          |
-| **Quality & CI**     | `Ruff`, GitHub Actions                                 |
-| **Optional Extra**   | `fastembed` code embeddings (`jina-embeddings-v2-base-code`) |
+| Component          | Technologies                                                            |
+| :----------------- | :---------------------------------------------------------------------- |
+| **LLM Inference**  | `Groq` (default model: `openai/gpt-oss-120b`)                           |
+| **Frontend UI**    | `Streamlit`, `Pandas`                                                   |
+| **Detection Core** | Custom lexer, k-gram hashing and winnowing (pure Python)                |
+| **Code Execution** | Restricted `subprocess` sandbox (timeouts, memory limits, scrubbed env) |
+| **Configuration**  | `python-dotenv`, Streamlit secrets                                      |
+| **Testing**        | `Pytest`, Streamlit `AppTest`                                           |
+| **Quality & CI**   | `Ruff`, GitHub Actions                                                  |
+| **Optional Extra** | `fastembed` code embeddings (`jina-embeddings-v2-base-code`)            |
 
 ---
 
@@ -193,12 +193,12 @@ make test         # Runs the Pytest suite with coverage
 
 ## Configuration
 
-| Variable                    | Default                 | Purpose                                         |
-| --------------------------- | ----------------------- | ----------------------------------------------- |
-| `GROQ_API_KEY`              | none                    | Groq API key (env, `.env` or Streamlit secrets) |
-| `CODESENTINEL_MODEL`        | `openai/gpt-oss-120b`   | Default Groq model                              |
-| `CODESENTINEL_DATA_DIR`     | `./data`                | Problems and datasets                           |
-| `CODESENTINEL_REVIEWS_PATH` | `./data/reviews.json`   | Decision log location                           |
+| Variable                    | Default               | Purpose                                         |
+| --------------------------- | --------------------- | ----------------------------------------------- |
+| `GROQ_API_KEY`              | none                  | Groq API key (env, `.env` or Streamlit secrets) |
+| `CODESENTINEL_MODEL`        | `openai/gpt-oss-120b` | Default Groq model                              |
+| `CODESENTINEL_DATA_DIR`     | `./data`              | Problems and datasets                           |
+| `CODESENTINEL_REVIEWS_PATH` | `./data/reviews.json` | Decision log location                           |
 
 Detection thresholds live in `codesentinel/config.py`. To add a problem, create `data/problems/<id>/` with `problem.md`, `starter.py`, an optional `tests.json` and `submissions/*.py`.
 
@@ -231,7 +231,7 @@ GROQ_API_KEY = "your_api_key_here"
 
 4. Click **Deploy**. Dependencies install from `requirements.txt` automatically.
 
-- **Dashboard URL:** `https://code-sentinel.streamlit.app/` 
+- **Dashboard URL:** `https://code-sentinel.streamlit.app/`
 
 > The decision log (`data/reviews.json`) lives on the app's file system, which is ephemeral on hosted platforms. Use the in-app **Download** button or point `CODESENTINEL_REVIEWS_PATH` at persistent storage.
 >
@@ -275,35 +275,35 @@ These numbers are modest on purpose: AI-code detection is hard, tidy human code 
 
 ## Deep Codebase Analysis
 
-| File                                  | Purpose / Details                                                                                                  |
-| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `app.py`                              | Streamlit UI with six tabs: class scan, pair comparison, AI investigator, submission analyser, evaluation, about.   |
-| `codesentinel/agent.py`               | Investigator loop: one LLM, four tools, at most five turns; returns the report, risk level and tool trace.         |
-| `codesentinel/ai_style.py`            | Heuristic AI-style scoring and the LLM judge with a strict JSON schema.                                            |
-| `codesentinel/analysis.py`            | `ClassAnalysis`: computes MOSS pairs and test signatures once and shares them across UI, CLI and agent.            |
-| `codesentinel/cli.py`                 | `python -m codesentinel` subcommands: scan, moss, same-bug, reference, ai-style, agent, evals, embeddings.         |
-| `codesentinel/config.py`              | Paths, model names, detection thresholds and sandbox limits, overridable through environment variables.            |
-| `codesentinel/embeddings.py`          | Optional embedding-based similarity for logic-level matches (needs the `embeddings` extra).                        |
-| `codesentinel/evaluation.py`          | Loads the labelled dataset, scores every detector and computes precision, recall and false-positive rate.          |
-| `codesentinel/llm.py`                 | Per-session Groq client wrapper with call and token accounting.                                                    |
-| `codesentinel/moss.py`                | k-gram hashing, winnowing, fingerprint comparison and common-code filtering.                                       |
-| `codesentinel/problems.py`            | `Problem` dataclass and loader for statements, starters, tests, submissions and references.                        |
-| `codesentinel/reference.py`           | Generates AI reference solutions and matches submissions against them.                                             |
-| `codesentinel/reviews.py`             | Atomic JSON decision log for the human review step.                                                                |
-| `codesentinel/sandbox.py`             | Runs untrusted code with timeout, memory and file-size limits and a scrubbed environment.                          |
-| `codesentinel/same_bug.py`            | Runs hidden tests in parallel and groups candidates with identical wrong outputs.                                  |
-| `codesentinel/tokenizer.py`           | DFA-style lexer that normalises identifiers, numbers and strings.                                                  |
-| `tests/test_core.py`                  | Unit tests for tokenizer, winnowing, heuristics, sandbox limits and class analysis.                                |
-| `tests/test_agent_and_reviews.py`     | Agent loop tested with a scripted fake LLM; review log round-trips.                                                |
-| `tests/test_app.py`                   | Headless Streamlit `AppTest` scenarios, including the agent and review flow.                                       |
-| `.github/workflows/ci.yml`            | Runs Ruff and Pytest on Python 3.10 and 3.12.                                                                      |
-| `.devcontainer/devcontainer.json`     | Dev container for Codespaces / VS Code: Python 3.12, installs dependencies, forwards port 8501.                    |
-| `Dockerfile` / `.dockerignore`        | Slim Python image that runs Streamlit as a non-root user, with a health check.                                     |
-| `.streamlit/config.toml`              | Headless server, usage stats off, theme colour.                                                                    |
-| `.streamlit/secrets.toml.example`     | Template for `GROQ_API_KEY` (copy to `secrets.toml` locally; never commit the real file).                          |
-| `.env.example`                        | Environment-variable template for local runs.                                                                      |
-| `Makefile`                            | Standardized developer commands.                                                                                   |
-| `.pre-commit-config.yaml`             | Pre-commit hooks for formatting and linting.                                                                       |
-| `CONTRIBUTING.md`                     | Open-source contribution guidelines.                                                                               |
-| `requirements.txt` / `pyproject.toml` | Runtime dependencies for Streamlit Cloud; project metadata, extras and Ruff/Pytest/Mypy config.                    |
-| `LICENSE`                             | MIT license.                                                                                                       |
+| File                                  | Purpose / Details                                                                                                 |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `app.py`                              | Streamlit UI with six tabs: class scan, pair comparison, AI investigator, submission analyser, evaluation, about. |
+| `codesentinel/agent.py`               | Investigator loop: one LLM, four tools, at most five turns; returns the report, risk level and tool trace.        |
+| `codesentinel/ai_style.py`            | Heuristic AI-style scoring and the LLM judge with a strict JSON schema.                                           |
+| `codesentinel/analysis.py`            | `ClassAnalysis`: computes MOSS pairs and test signatures once and shares them across UI, CLI and agent.           |
+| `codesentinel/cli.py`                 | `python -m codesentinel` subcommands: scan, moss, same-bug, reference, ai-style, agent, evals, embeddings.        |
+| `codesentinel/config.py`              | Paths, model names, detection thresholds and sandbox limits, overridable through environment variables.           |
+| `codesentinel/embeddings.py`          | Optional embedding-based similarity for logic-level matches (needs the `embeddings` extra).                       |
+| `codesentinel/evaluation.py`          | Loads the labelled dataset, scores every detector and computes precision, recall and false-positive rate.         |
+| `codesentinel/llm.py`                 | Per-session Groq client wrapper with call and token accounting.                                                   |
+| `codesentinel/moss.py`                | k-gram hashing, winnowing, fingerprint comparison and common-code filtering.                                      |
+| `codesentinel/problems.py`            | `Problem` dataclass and loader for statements, starters, tests, submissions and references.                       |
+| `codesentinel/reference.py`           | Generates AI reference solutions and matches submissions against them.                                            |
+| `codesentinel/reviews.py`             | Atomic JSON decision log for the human review step.                                                               |
+| `codesentinel/sandbox.py`             | Runs untrusted code with timeout, memory and file-size limits and a scrubbed environment.                         |
+| `codesentinel/same_bug.py`            | Runs hidden tests in parallel and groups candidates with identical wrong outputs.                                 |
+| `codesentinel/tokenizer.py`           | DFA-style lexer that normalises identifiers, numbers and strings.                                                 |
+| `tests/test_core.py`                  | Unit tests for tokenizer, winnowing, heuristics, sandbox limits and class analysis.                               |
+| `tests/test_agent_and_reviews.py`     | Agent loop tested with a scripted fake LLM; review log round-trips.                                               |
+| `tests/test_app.py`                   | Headless Streamlit `AppTest` scenarios, including the agent and review flow.                                      |
+| `.github/workflows/ci.yml`            | Runs Ruff and Pytest on Python 3.10 and 3.12.                                                                     |
+| `.devcontainer/devcontainer.json`     | Dev container for Codespaces / VS Code: Python 3.12, installs dependencies, forwards port 8501.                   |
+| `Dockerfile` / `.dockerignore`        | Slim Python image that runs Streamlit as a non-root user, with a health check.                                    |
+| `.streamlit/config.toml`              | Headless server, usage stats off, theme colour.                                                                   |
+| `.streamlit/secrets.toml.example`     | Template for `GROQ_API_KEY` (copy to `secrets.toml` locally; never commit the real file).                         |
+| `.env.example`                        | Environment-variable template for local runs.                                                                     |
+| `Makefile`                            | Standardized developer commands.                                                                                  |
+| `.pre-commit-config.yaml`             | Pre-commit hooks for formatting and linting.                                                                      |
+| `CONTRIBUTING.md`                     | Open-source contribution guidelines.                                                                              |
+| `requirements.txt` / `pyproject.toml` | Runtime dependencies for Streamlit Cloud; project metadata, extras and Ruff/Pytest/Mypy config.                   |
+| `LICENSE`                             | MIT license.                                                                                                      |

@@ -107,8 +107,8 @@ def metrics(samples: list[dict], detector: str) -> dict:
 
     return {
         "precision": tp / (tp + fp) if tp + fp else 0.0,  # of those flagged, how many really are AI
-        "recall": tp / (tp + fn) if tp + fn else 0.0,     # of all AI samples, how many were caught
-        "fpr": fp / (fp + tn) if fp + tn else 0.0,        # of all humans, how many were wrongly flagged
+        "recall": tp / (tp + fn) if tp + fn else 0.0,  # of all AI samples, how many were caught
+        "fpr": fp / (fp + tn) if fp + tn else 0.0,  # of all humans, how many were wrongly flagged
         "fp_clean": fp_in("human_clean"),
         "fp_messy": fp_in("human_messy"),
     }
