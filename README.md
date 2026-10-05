@@ -132,6 +132,8 @@ Code-Sentinel/
 ├── .gitignore
 ├── Dockerfile                  # Container image (runs as non-root)
 ├── LICENSE                     # MIT
+├── Makefile                    # Developer commands (install, test, lint)
+├── .pre-commit-config.yaml     # Git hooks for code formatting
 ├── pyproject.toml              # Project metadata and tooling
 └── requirements.txt            # Runtime dependencies
 ```
@@ -178,12 +180,13 @@ python -m codesentinel evals -v                                  # add --llm to 
 python -m codesentinel reference generate max_subarray           # regenerate AI references
 ```
 
-### 5. Run Tests
+### 5. Run Tests and Quality Checks
 
 ```bash
-pip install -e ".[dev]"
-ruff check .
-pytest -q
+make install      # Installs the app and all dev dependencies (pytest, ruff, mypy)
+make lint         # Runs Ruff and checks formatting
+make typecheck    # Runs MyPy to verify types
+make test         # Runs the Pytest suite with coverage
 ```
 
 ---
@@ -299,5 +302,8 @@ These numbers are modest on purpose: AI-code detection is hard, tidy human code 
 | `.streamlit/config.toml`              | Headless server, usage stats off, theme colour.                                                                    |
 | `.streamlit/secrets.toml.example`     | Template for `GROQ_API_KEY` (copy to `secrets.toml` locally; never commit the real file).                          |
 | `.env.example`                        | Environment-variable template for local runs.                                                                      |
-| `requirements.txt` / `pyproject.toml` | Runtime dependencies for Streamlit Cloud; project metadata, extras and Ruff/Pytest config.                         |
+| `Makefile`                            | Standardized developer commands.                                                                                   |
+| `.pre-commit-config.yaml`             | Pre-commit hooks for formatting and linting.                                                                       |
+| `CONTRIBUTING.md`                     | Open-source contribution guidelines.                                                                               |
+| `requirements.txt` / `pyproject.toml` | Runtime dependencies for Streamlit Cloud; project metadata, extras and Ruff/Pytest/Mypy config.                    |
 | `LICENSE`                             | MIT license.                                                                                                       |

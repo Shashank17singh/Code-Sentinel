@@ -8,8 +8,9 @@ from __future__ import annotations
 import html
 import os
 from dataclasses import replace
+from typing import Iterable
 
-import pandas as pd
+import pandas as pd  # type: ignore
 import streamlit as st
 
 from codesentinel import APP_NAME, __version__, moss
@@ -72,7 +73,7 @@ def evaluation_results() -> list[dict]:
 # ============================================================
 
 
-def render_code(code: str, matched_lines: list[int] | set[int] = (), max_height: int = 460) -> None:
+def render_code(code: str, matched_lines: Iterable[int] = (), max_height: int = 460) -> None:
     """Show code with matched lines highlighted."""
     matched = set(matched_lines)
     rows = []

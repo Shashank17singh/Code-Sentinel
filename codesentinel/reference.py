@@ -12,6 +12,7 @@ is exactly the signal we want.
 from __future__ import annotations
 
 import re
+from typing import Any
 
 from groq import BadRequestError
 
@@ -80,7 +81,7 @@ def generate_references(llm: LLMClient, problem: Problem, force: bool = False, l
                 log(f"  failed   {path.name}: {exc}")
 
 
-def reference_match(problem: Problem, code: str) -> dict:
+def reference_match(problem: Problem, code: str) -> dict[str, Any]:
     """Compare ``code`` with every AI reference solution of the problem."""
     if not problem.references:
         return {"available": False, "best_reference": None, "best_match": 0.0,
@@ -89,7 +90,7 @@ def reference_match(problem: Problem, code: str) -> dict:
     mine = fingerprint(code)
     ignore = fingerprint(problem.starter).hashes  # only the starter code is ignored here
 
-    best = {"reference": None, "score": 0.0, "lines": []}
+    best: dict[str, Any] = {"reference": None, "score": 0.0, "lines": []}
     union: set[int] = set()
     for name, ref_code in problem.references.items():
         ref = fingerprint(ref_code)

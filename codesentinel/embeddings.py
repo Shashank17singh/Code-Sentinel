@@ -24,7 +24,7 @@ _model = None
 def embed(codes: list[str]):
     try:
         import numpy as np
-        from fastembed import TextEmbedding
+        from fastembed import TextEmbedding  # type: ignore
     except ImportError as exc:
         raise RuntimeError('Embeddings need the optional extra: pip install "codesentinel[embeddings]"') from exc
 

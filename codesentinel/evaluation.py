@@ -21,7 +21,7 @@ from pathlib import Path
 from codesentinel.ai_style import heuristic_score, llm_judge
 from codesentinel.config import EVALS_DIR
 from codesentinel.llm import LLMClient
-from codesentinel.problems import load_problem
+from codesentinel.problems import Problem, load_problem
 from codesentinel.reference import reference_match
 
 DATASET = EVALS_DIR / "dataset"
@@ -70,7 +70,7 @@ def run_detectors(
     ``use_cached_llm=True`` only already-cached judgements are used (free).
     """
     cache = _load_cache(cache_path)
-    problems: dict[str, object] = {}
+    problems: dict[str, Problem] = {}
 
     for s in samples:
         problem = problems.setdefault(s["problem"], load_problem(s["problem"]))

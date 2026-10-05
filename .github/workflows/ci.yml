@@ -18,4 +18,5 @@ jobs:
           cache: pip
       - run: pip install -e ".[dev]"
       - run: ruff check .
-      - run: pytest -q
+      - run: mypy codesentinel/ app.py
+      - run: pytest --cov=codesentinel -q

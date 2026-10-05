@@ -7,6 +7,7 @@ token counts and API keys are never mixed between Streamlit sessions.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import Any
 
 from groq import Groq
 
@@ -55,8 +56,8 @@ class LLMClient:
         self.model = model
         self.usage = UsageTracker()
 
-    def chat(self, messages: list[dict], *, label: str, model: str | None = None, **kwargs):
-        response = self._client.chat.completions.create(model=model or self.model, messages=messages, **kwargs)
+    def chat(self, messages: list[dict[str, Any]], *, label: str, model: str | None = None, **kwargs: Any) -> Any:
+        response = self._client.chat.completions.create(model=model or self.model, messages=messages, **kwargs)  # type: ignore
         if response.usage is not None:
             self.usage.record(label, response.usage)
         return response

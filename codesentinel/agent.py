@@ -12,6 +12,7 @@ import json
 import re
 from collections.abc import Callable
 from dataclasses import dataclass, field
+from typing import Any
 
 from groq import BadRequestError
 
@@ -115,7 +116,7 @@ def investigate(
 
     # Line numbers let the agent quote real lines instead of inventing them.
     numbered = "\n".join(f"{n:>3} {line}" for n, line in enumerate(problem.submissions[student].splitlines(), 1))
-    messages: list[dict] = [
+    messages: list[dict[str, Any]] = [
         {"role": "system", "content": SYSTEM_PROMPT},
         {
             "role": "user",
@@ -136,7 +137,7 @@ def investigate(
         tools_now = TOOLS if attempt < max_attempts else None
         try:
             kwargs = {"tools": tools_now} if tools_now else {}
-            response = llm.chat(messages, label="agent", **kwargs)
+            response = llm.chat(messages, label="agent", **kwargs)  # type: ignore
         except BadRequestError:
             # The model occasionally invents a malformed tool call, which Groq rejects.
             emit("Malformed tool call rejected by the API, retrying")
