@@ -146,7 +146,7 @@ Code-Sentinel/
 
 ```bash
 git clone https://github.com/Shashank17singh/Code-Sentinel
-cd CodeSentinel
+cd Code-Sentinel
 python -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
@@ -212,9 +212,9 @@ Detection thresholds live in `codesentinel/config.py`. To add a problem, create 
 git init
 git add .
 git commit -m "Initial commit: CodeSentinel"
-git branch -M main
+git branch -M master
 git remote add origin https://github.com/Shashank17singh/Code-Sentinel.git
-git push -u origin main
+git push -u origin master
 ```
 
 `.env` and `.streamlit/secrets.toml` are git-ignored, so your API key is never pushed. Check with `git status` before committing.
@@ -222,7 +222,7 @@ git push -u origin main
 ### 2. Deploy on Streamlit Community Cloud
 
 1. Open [share.streamlit.io](https://share.streamlit.io) and choose **Create app** → **From existing repo**.
-2. Select your repository, branch `main` and main file path `app.py`.
+2. Select your repository, branch `master` and main file path `app.py`.
 3. Open **Advanced settings**, choose Python **3.12** and paste your key under **Secrets**:
 
 ```toml
