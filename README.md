@@ -235,7 +235,7 @@ GROQ_API_KEY = "your_api_key_here"
 
 > The decision log (`data/reviews.json`) lives on the app's file system, which is ephemeral on hosted platforms. Use the in-app **Download** button or point `CODESENTINEL_REVIEWS_PATH` at persistent storage.
 >
-> The **Analyse a submission** tab can execute pasted code on the host (restricted subprocess, not a hardened sandbox). Keep that in mind before sharing a public URL, or deploy the Docker image below instead.
+> The **Analyse a submission** tab only executes pasted code when `CODESENTINEL_ALLOW_EXECUTION` is set. Leave it unset on any public URL: the runner is a restricted subprocess, not a hardened sandbox.
 
 ### Alternative: Docker
 
@@ -267,7 +267,7 @@ These numbers are modest on purpose: AI-code detection is hard, tidy human code 
 
 ## Security Notes
 
-- Hidden tests execute submitted code in a restricted subprocess (isolated interpreter, timeout, memory limit, scrubbed environment so API keys are not inherited). This is defence in depth, **not** a hardened sandbox: run the app in a container or VM when handling untrusted code.
+- Bundled submissions run in a restricted subprocess (isolated interpreter, timeout, memory limit, scrubbed environment so API keys are not inherited). This is defence in depth, **not** a hardened sandbox, so visitors' code only runs when `CODESENTINEL_ALLOW_EXECUTION` is set. Enable it only inside a disposable container or VM.
 - Candidate code is passed to the LLM as untrusted data, and the prompts instruct the model to ignore instructions inside it.
 - API keys are never written to disk by the app.
 

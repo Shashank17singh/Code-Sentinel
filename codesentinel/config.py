@@ -44,3 +44,6 @@ STYLE_FLAG_AT = 0.6  # heuristic / LLM style score that triggers a flag
 RUN_TIMEOUT_SECONDS = 5
 RUN_MEMORY_MB = 512
 RUN_MAX_OUTPUT_CHARS = 10_000
+# Visitors' code only runs when the operator turns this on. The runner is not a security
+# boundary, so a public deployment must leave it unset.
+ALLOW_CODE_EXECUTION = os.getenv("CODESENTINEL_ALLOW_EXECUTION", "").strip().lower() in {"1", "true", "yes"}

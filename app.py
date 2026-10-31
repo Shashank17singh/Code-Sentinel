@@ -13,7 +13,7 @@ from dataclasses import replace
 import pandas as pd  # type: ignore
 import streamlit as st
 
-from codesentinel import APP_NAME, __version__, moss
+from codesentinel import APP_NAME, __version__, config, moss
 from codesentinel import evaluation as ev
 from codesentinel import reviews as review_log
 from codesentinel.agent import investigate
@@ -337,12 +337,16 @@ def tab_custom(problem_id: str, llm: LLMClient | None) -> None:
         placeholder="import sys\n\n...",
     )
     c1, c2 = st.columns(2)
+    can_execute = config.ALLOW_CODE_EXECUTION and bool(problem.tests)
     run_tests = c1.checkbox(
         "Run hidden tests",
         value=False,
-        disabled=not problem.tests,
-        help="Executes the code in a restricted subprocess (timeout, memory limit, no secrets). "
-        + ("" if problem.tests else "This problem has no tests."),
+        disabled=not can_execute,
+        help="Executes the code in a restricted subprocess (timeout, memory limit, no secrets)."
+        if can_execute
+        else "Off on this deployment: running visitors' code needs CODESENTINEL_ALLOW_EXECUTION."
+        if problem.tests
+        else "This problem has no tests.",
     )
     use_llm = c2.checkbox(
         "Also run the LLM judge",
@@ -365,7 +369,8 @@ def tab_custom(problem_id: str, llm: LLMClient | None) -> None:
     m2.metric("AI reference match", pct(ref["best_match"]), help=f"Closest: {ref['best_reference']}")
     m3.metric("AI style (heuristic)", f"{style['heuristic']['score']:.2f}")
 
-    if run_tests:
+    # Checked here too: a disabled widget is only enforced in the browser.
+    if run_tests and can_execute:
         mine = wrong_answers(replace(problem, submissions={UPLOADED: code}))[UPLOADED]
         if not mine:
             st.success("Passes all hidden tests.")
@@ -470,8 +475,8 @@ def tab_about() -> None:
 
 **Security notes**
 
-- The hidden-test runner executes submitted code in a restricted subprocess (isolated interpreter, timeout, memory limit, scrubbed environment).
-  It is defence in depth, not a hardened sandbox: deploy behind a container or VM when handling untrusted code.
+- Running a visitor's code against the hidden tests is off unless `CODESENTINEL_ALLOW_EXECUTION` is set.
+  The runner is defence in depth, not a hardened sandbox: only enable it inside a disposable container or VM, never on a public deployment.
 - Your Groq key is kept only in the browser session (or in server secrets) and is never written to disk.
         """
     )

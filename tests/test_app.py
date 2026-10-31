@@ -41,6 +41,40 @@ def test_analyse_submission_flow(monkeypatch):
     assert any(m.label == "AI reference match" for m in at.metric)
 
 
+def submit_with_hidden_tests(monkeypatch):
+    """Tick the box if it can be ticked, submit, and return the code that was executed."""
+    from codesentinel import same_bug
+
+    calls = []
+    monkeypatch.delenv("GROQ_API_KEY", raising=False)
+    monkeypatch.setattr(same_bug, "run_code", lambda code, stdin: calls.append(code) or "")
+    at = run_app()
+    calls.clear()  # bundled submissions may run while the analysis warms up
+    at.text_area[0].set_value("print('visitor code')\n").run()
+    box = next(c for c in at.checkbox if c.label == "Run hidden tests")
+    if not box.disabled:
+        box.check().run()
+    next(b for b in at.button if b.label == "Analyse submission").click().run()
+    assert not at.exception
+    return calls
+
+
+def test_visitor_code_never_runs_by_default(monkeypatch):
+    from codesentinel import config
+
+    monkeypatch.setattr(config, "ALLOW_CODE_EXECUTION", False)
+
+    assert submit_with_hidden_tests(monkeypatch) == []
+
+
+def test_visitor_code_runs_when_the_operator_allows_it(monkeypatch):
+    from codesentinel import config
+
+    monkeypatch.setattr(config, "ALLOW_CODE_EXECUTION", True)
+
+    assert "print('visitor code')\n" in submit_with_hidden_tests(monkeypatch)
+
+
 def test_agent_flow_and_human_review(monkeypatch, tmp_path):
     from codesentinel import agent as agent_mod
     from codesentinel import reviews as reviews_mod
