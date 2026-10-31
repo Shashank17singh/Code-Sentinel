@@ -11,3 +11,6 @@ venv/
 build/
 dist/
 .DS_Store
+
+# Test coverage data
+.coverage
