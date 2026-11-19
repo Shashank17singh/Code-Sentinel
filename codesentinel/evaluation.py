@@ -50,7 +50,7 @@ def _load_cache(path: Path) -> dict:
 
 
 def cached_llm_judge(llm: LLMClient, sample: dict, cache: dict, cache_path: Path = LLM_CACHE) -> dict:
-    key = hashlib.sha1(sample["code"].encode()).hexdigest()
+    key = hashlib.sha1(sample["code"].encode(), usedforsecurity=False).hexdigest()
     if key not in cache:
         problem = load_problem(sample["problem"])
         cache[key] = llm_judge(llm, sample["code"], problem.statement)
@@ -83,7 +83,7 @@ def run_detectors(
         if llm is not None:
             verdict = cached_llm_judge(llm, s, cache, cache_path)
         elif use_cached_llm:
-            verdict = cache.get(hashlib.sha1(s["code"].encode()).hexdigest())
+            verdict = cache.get(hashlib.sha1(s["code"].encode(), usedforsecurity=False).hexdigest())
         if verdict is not None:
             s["scores"]["llm_judge"] = verdict["ai_likelihood"]
             s["flags"]["llm_judge"] = verdict["flag"]

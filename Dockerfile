@@ -13,9 +13,10 @@ COPY . .
 
 # Run as an unprivileged user: submitted code is executed by the app.
 RUN useradd --create-home --uid 1000 app && chown -R app:app /app
-USER app
+USER 1000:1000
 
 EXPOSE 8501
+# hadolint ignore=DL3025
 HEALTHCHECK --interval=30s --timeout=5s \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8501/_stcore/health')"
 
